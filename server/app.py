@@ -1,9 +1,18 @@
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config.from_object('server.config')
+db = SQLAlchemy()
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+def create_app():
+    """Construct the core application."""
+    app = Flask(__name__, instance_relative_config=False)
+    app.config.from_object("server.config.Config")
+
+    db.init_app(app)
+
+    with app.app_context():
+        from . import routes
+
+        db.create_all()
+        return app

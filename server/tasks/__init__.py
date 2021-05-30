@@ -2,9 +2,9 @@ import time
 
 from celery import Celery
 
-from server.config import CELERY_BACKEND, CELERY_BROKER
+from server.config import Config
 
-celery = Celery('tasks', broker=CELERY_BROKER, backend=CELERY_BACKEND)
+celery = Celery('tasks', broker=Config.CELERY_BROKER, backend=Config.CELERY_BACKEND)
 
 
 @celery.task(name='tasks.add')
