@@ -1,10 +1,60 @@
 version: '3'
+volumes:
+  postgresql_data:
+  server:
 
 services:
   cache:
     container_name: dip_cache
     hostname: dip_cache
     image: redis
+
+  db:
+    container_name: dip_database
+    hostname: nafaqat_database
+    image: postgres:12-alpine
+    restart: always
+    env_file: .env
+    ports:
+      - "54322:5432"
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+
+  worker_1:
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    hostname: dip_worker
+    command: >
+      bash -xc "
+        cd ..
+        celery -A server.tasks worker --loglevel=info
+      "
+    env_file: .env
+    volumes:
+      - ./server:/dip/server
+    links:
+      - cache
+    depends_on:
+      - cache
+
+  monitor:
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    hostname: dip_worker
+    command: >
+      bash -xc "
+        cd ..
+        flower -A server.tasks --port=5555
+      "
+    env_file: .env
+    volumes:
+      - ./server:/dip/server
+    ports:
+      - "5555:5555"
+    depends_on:
+      - cache
 
   server:
     container_name: dip_server
