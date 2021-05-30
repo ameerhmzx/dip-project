@@ -1,79 +1,102 @@
 version: '3'
 volumes:
   postgresql_data:
-  server:
 
 services:
-  cache:
-    container_name: dip_cache
-    hostname: dip_cache
-    image: redis
-
-  db:
-    container_name: dip_database
-    hostname: nafaqat_database
+  database:
+    container_name: photos_database
+    hostname: photos_database
     image: postgres:12-alpine
-    restart: always
     environment:
-      - "POSTGRES_PASSWORD=photos"
       - "POSTGRES_USER=photos"
+      - "POSTGRES_PASSWORD=photos"
       - "POSTGRES_DB=photos"
-    ports:
-      - "54322:5432"
     volumes:
       - postgresql_data:/var/lib/postgresql/data
-
-  worker_1:
-    build:
-      context: ./server/
-      dockerfile: Dockerfile
-    hostname: dip_worker
-    command: >
-      bash -xc "
-        cd ..
-        celery -A server.tasks worker --loglevel=info
-      "
-    env_file: .env
-    volumes:
-      - ./server:/dip/server
-    links:
-      - cache
-    depends_on:
-      - cache
-
-  monitor:
-    build:
-      context: ./server/
-      dockerfile: Dockerfile
-    hostname: dip_worker
-    command: >
-      bash -xc "
-        cd ..
-        flower -A server.tasks --port=5555
-      "
-    env_file: .env
-    volumes:
-      - ./server:/dip/server
     ports:
-      - "5555:5555"
-    depends_on:
-      - cache
+      - "54322:5432"
+
+  cache:
+    container_name: photos_cache
+    hostname: photos_cache
+    image: redis
+    ports:
+      - "63791:6379"
 
   server:
-    container_name: dip_server
-    hostname: dip_server
+    container_name: photos_server
+    hostname: photos_primary
     build:
-      context: ./server/
+      context: ./
       dockerfile: Dockerfile
-    image: dip_server
-    command: >
-      bash -xc "
-        flask run --host=0.0.0.0
+    image: photos
+    command: sh -c "
+      python -m pip install -r requirements.txt &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
       "
     env_file: .env
     links:
-      - db
+      - database
+    depends_on:
+      - database
     ports:
-      - "5000:5000"
+      - "8000:8000"
     volumes:
-      - ./server:/dip/server
+      - .:/photos
+      - ./media/:/photos/media/
+
+#  worker_1:
+#    build:
+#      context: ./server/
+#      dockerfile: Dockerfile
+#    hostname: dip_worker
+#    command: >
+#      bash -xc "
+#        cd ..
+#        celery -A server.tasks worker --loglevel=info
+#      "
+#    env_file: .env
+#    volumes:
+#      - ./server:/dip/server
+#    links:
+#      - cache
+#    depends_on:
+#      - cache
+#
+#  monitor:
+#    build:
+#      context: ./server/
+#      dockerfile: Dockerfile
+#    hostname: dip_worker
+#    command: >
+#      bash -xc "
+#        cd ..
+#        flower -A server.tasks --port=5555
+#      "
+#    env_file: .env
+#    volumes:
+#      - ./server:/dip/server
+#    ports:
+#      - "5555:5555"
+#    depends_on:
+#      - cache
+#
+#  server:
+#    container_name: dip_server
+#    hostname: dip_server
+#    build:
+#      context: ./server/
+#      dockerfile: Dockerfile
+#    image: dip_server
+#    command: >
+#      bash -xc "
+#        flask run --host=0.0.0.0
+#      "
+#    env_file: .env
+#    links:
+#      - db
+#    ports:
+#      - "5000:5000"
+#    volumes:
+#      - ./server:/dip/server
