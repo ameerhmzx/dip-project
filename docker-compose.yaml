@@ -44,7 +44,6 @@ services:
       - "8000:8000"
     volumes:
       - .:/photos
-      - ./media/:/photos/media/
 
 #  worker_1:
 #    build:
