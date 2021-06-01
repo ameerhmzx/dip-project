@@ -51,7 +51,7 @@ services:
       - frontend
     depends_on:
       - database
-      - elastic
+#      - elastic
       - cache
     ports:
       - "8000:8000"
@@ -82,57 +82,34 @@ services:
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
 
-#  worker_1:
-#    build:
-#      context: ./server/
-#      dockerfile: Dockerfile
-#    hostname: dip_worker
-#    command: >
-#      bash -xc "
-#        cd ..
-#        celery -A server.tasks worker --loglevel=info
-#      "
-#    env_file: .env
-#    volumes:
-#      - ./server:/dip/server
-#    links:
-#      - cache
-#    depends_on:
-#      - cache
+  worker_1:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: photos_worker_1
+    command: celery -A photos worker --loglevel=info
+    env_file: .env
+    volumes:
+      - .:/photos
+    networks:
+      - backend
+    depends_on:
+      - cache
+      - server
 #
 #  monitor:
 #    build:
-#      context: ./server/
+#      context: ./
 #      dockerfile: Dockerfile
-#    hostname: dip_worker
-#    command: >
-#      bash -xc "
-#        cd ..
-#        flower -A server.tasks --port=5555
-#      "
+#    container_name: photos_worker_monitor
+#    command: flower -A photos --port=5555
 #    env_file: .env
 #    volumes:
-#      - ./server:/dip/server
+#      - .:/photos
 #    ports:
 #      - "5555:5555"
+#    networks:
+#      - backend
 #    depends_on:
 #      - cache
-#
-#  server:
-#    container_name: dip_server
-#    hostname: dip_server
-#    build:
-#      context: ./server/
-#      dockerfile: Dockerfile
-#    image: dip_server
-#    command: >
-#      bash -xc "
-#        flask run --host=0.0.0.0
-#      "
-#    env_file: .env
-#    links:
-#      - db
-#    ports:
-#      - "5000:5000"
-#    volumes:
-#      - ./server:/dip/server
+#      - server

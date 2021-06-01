@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'photos.settings')
 
-app = Celery('Photos')
+app = Celery('photos')
 
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.

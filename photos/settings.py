@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_celery_results',
-    'photos'
+    'rest_framework',
+    'photos',
 ]
 
 MIDDLEWARE = [
@@ -73,8 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'photos.wsgi.application'
 
-
-CELERY_RESULT_BACKEND = 'django-cache'
 # Cache
 REDIS_URL = environ.get('REDIS_URL', 'redis://{}:{}'.format(
     environ.get('REDIS_HOST', '127.0.0.1'),
@@ -90,6 +89,10 @@ CACHES = {
         }
     },
 }
+
+CELERY_RESULT_BACKEND = 'django-cache'
+CELERY_CACHE_BACKEND = 'default'
+CELERY_BROKER_URL = f"{REDIS_URL}/0"
 
 
 # Database
@@ -149,6 +152,7 @@ STATICFILES_FINDERS = (
 )
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 FILE_UPLOAD_HANDLERS = (
     'django.core.files.uploadhandler.MemoryFileUploadHandler',
@@ -157,5 +161,5 @@ FILE_UPLOAD_HANDLERS = (
 
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-STATIC_ROOT = BASE_DIR / 'static'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = str(BASE_DIR / 'static')
+MEDIA_ROOT = str(BASE_DIR / 'media')
