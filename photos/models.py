@@ -20,4 +20,3 @@ class Photo(models.Model):
 
     faces = models.ManyToManyField(Face)
     meta = JSONField(blank=True, null=True)
-
