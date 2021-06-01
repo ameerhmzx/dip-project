@@ -9,7 +9,12 @@ RUN git clone https://github.com/AlexeyAB/darknet.git && cd darknet \
       && cp darknet /usr/local/bin \
       && cd .. && rm -rf darknet
 
+COPY ds_requirements.txt requirements.txt
+RUN pip install -r requirements.txt && rm -rf requirements.txt
+
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt && rm -rf requirements.txt
+
+RUN apt update && apt install --no-install-recommends --no-install-suggests -y libgl1-mesa-glx;
 
 WORKDIR /photos

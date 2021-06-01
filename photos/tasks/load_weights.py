@@ -12,7 +12,8 @@ def get_weights(name):
     path = f'./weights/{name}.weights'
 
     if not os.path.isfile(path):
+        os.makedirs('./weights', exist_ok=True)
         print(f"'{path}' will be downloaded...")
         urlretrieve(url, path)
-    print("DONE")
+    print(path)
     return path

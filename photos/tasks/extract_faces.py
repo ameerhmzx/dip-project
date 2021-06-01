@@ -1,5 +1,5 @@
 import math
-from typing import List, TypedDict, Tuple
+from typing import List, TypedDict, Tuple, Any
 
 import cv2
 import mtcnn
@@ -15,7 +15,7 @@ class Face(TypedDict):
     """Just for type declaration"""
     bbox: Tuple[int, int, int, int]
     confidence: float
-    embeddings: np.typing.ArrayLike
+    embeddings: Any
 
 
 def align(img, left_eye, right_eye):

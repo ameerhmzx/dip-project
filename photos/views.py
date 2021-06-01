@@ -3,7 +3,7 @@ from django.views import View
 
 from PIL import Image
 
-from .tasks import extract_meta
+from .tasks import extract_meta, extract_faces
 
 
 class ImageView(View):
@@ -14,7 +14,9 @@ class ImageView(View):
 
         image = Image.open(photo)
 
-        data = extract_meta(image)
-        print(data, flush=True)
+        meta = extract_meta(image)
+        faces = extract_faces(image)
+        print(meta, flush=True)
+        print(faces, flush=True)
 
         return HttpResponse('result')
