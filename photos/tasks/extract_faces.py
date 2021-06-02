@@ -2,13 +2,12 @@ import math
 from typing import List, TypedDict, Tuple, Any
 
 import cv2
-import mtcnn
 import numpy as np
 from PIL import Image
-from deepface.basemodels.Facenet import InceptionResNetV2
 
 from photos.celery import app
 from .load_weights import get_weights
+from photos import models
 
 
 class Face(TypedDict):
@@ -54,12 +53,15 @@ def normalize_face(image: Image, face):
 
 
 @app.task
-def extract_faces(image: Image) -> List[Face]:
+def extract_faces(image_path: str, pk: int) -> List[Face]:
     """extract faces from the given image"""
+    image = Image.open(image_path)
     image = np.array(image)
 
     if image.shape[0] <= 0 or image.shape[1] <= 0:
         return []
+
+    import mtcnn
 
     # detect faces from image
     face_detector = mtcnn.MTCNN()
@@ -67,6 +69,8 @@ def extract_faces(image: Image) -> List[Face]:
 
     if len(detections) < 1:
         return []
+
+    from deepface.basemodels.Facenet import InceptionResNetV2
 
     # load InceptionResNet model provided by deepface
     facenet_model = InceptionResNetV2()
@@ -76,11 +80,22 @@ def extract_faces(image: Image) -> List[Face]:
     faces = [normalize_face(image, face) for face in detections]
     embeddings = facenet_model.predict(np.vstack(faces), batch_size=len(faces))
 
-    return [
-        {
-            'bbox': detections[i]['box'],
-            'confidence': detections[i]['confidence'],
-            'embeddings': embeddings[i]
-        }
-        for i in range(len(faces))
-    ]
+    # TODO: recognize faces based on embedding
+    for i in range(len(faces)):
+        models.Face.objects.create(
+            confidence=detections[i]['confidence'],
+            top=detections[i]['box'][0],
+            left=detections[i]['box'][1],
+            height=detections[i]['box'][2],
+            width=detections[i]['box'][3],
+            photo_id=pk
+        )
+
+    # return [
+    #     {
+    #         'bbox': detections[i]['box'],
+    #         'confidence': detections[i]['confidence'],
+    #         'embeddings': embeddings[i]
+    #     }
+    #     for i in range(len(faces))
+    # ]

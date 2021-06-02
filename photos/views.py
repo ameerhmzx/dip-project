@@ -10,7 +10,7 @@ from .models import Photo
 from .serializers import PhotoSerializer
 
 
-# from .tasks import extract_meta
+from .tasks import extract_meta, extract_faces
 
 
 def crop_center(pil_img, crop_width, crop_height):
@@ -44,6 +44,9 @@ class PhotoListView(generics.ListCreateAPIView):
             image=image_to_file(image, photo.name),
             thumbnail=image_to_file(thumbnail, "thb_" + photo.name)
         )
+
+        extract_meta.delay(photo_obj.image.path, photo_obj.id)
+        extract_faces.delay(photo_obj.image.path, photo_obj.id)
 
         serializer = PhotoSerializer(photo_obj)
         return Response(serializer.data)

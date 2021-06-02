@@ -1,30 +1,31 @@
 import io
-from datetime import datetime
+import json
 
 from PIL import Image, ImageCms
 from PIL.ExifTags import TAGS
 
 from photos.celery import app
+from photos.models import Photo
 
 
 def no_op(x): return x
 
 
 ALLOWED_TAGS = {
-    'XResolution': no_op,
-    'YResolution': no_op,
+    'XResolution': float,
+    'YResolution': float,
     'Make': no_op,
     'Model': no_op,
     'Software': no_op,
-    'DateTime': lambda x: datetime.strptime(x, '%Y:%m:%d %H:%M:%S'),
-    'ApertureValue': no_op,
-    'ExposureTime': no_op,
-    'ShutterSpeedValue': no_op,
-    'FocalLength': no_op,
+    'DateTime': no_op,
+    'ApertureValue': float,
+    'ExposureTime': float,
+    'ShutterSpeedValue': float,
+    'FocalLength': float,
     'ISOSpeedRatings': no_op,
     'MeteringMode': no_op,
     'Flash': no_op,
-    'FNumber': no_op,
+    'FNumber': float,
     'ExposureProgram': no_op,
     'WhiteBalance': no_op,
     'LensMake': no_op,
@@ -63,8 +64,13 @@ def get_exif_data(image: Image):
 
 
 @app.task
-def extract_meta(image: Image):
+def extract_meta(image_path: str, pk: int):
+    image = Image.open(image_path)
+
     color_info = get_color_info(image)
     exif_data = get_exif_data(image)
 
-    return {**color_info, **exif_data}
+    meta = {**color_info, **exif_data}
+    photo = Photo.objects.get(pk=pk)
+    photo.meta = json.dumps(meta)
+    photo.save()
