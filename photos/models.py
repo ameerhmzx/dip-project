@@ -52,6 +52,20 @@ class Face(StateAwareModel):
         super().save(*args, **kwargs)
 
 
+class DetectedObject(models.Model):
+    left = models.PositiveIntegerField()
+    top = models.PositiveIntegerField()
+    width = models.PositiveIntegerField()
+    height = models.PositiveIntegerField()
+    confidence = models.FloatField()
+    name = models.CharField(max_length=255)
+    info = JSONField()
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='detected_objects')
+
+    def __str__(self):
+        return self.name
+
+
 @receiver(post_delete, sender=Face)
 def delete_face(sender, instance, **kwargs):
     try:

@@ -23,14 +23,30 @@ class FaceSerializer(serializers.ModelSerializer):
         fields = ['id', 'bbox', 'confidence', 'person']
 
 
+class ObjectSerializer(serializers.ModelSerializer):
+    bbox = serializers.SerializerMethodField()
+    info = serializers.SerializerMethodField()
+
+    def get_bbox(self, obj):
+        return [obj.top, obj.left, obj.height, obj.width]
+
+    def get_info(self, obj):
+        return json.loads(obj.info or 'null')
+
+    class Meta:
+        model = models.DetectedObject
+        fields = ['id', 'bbox', 'confidence', 'name', 'info']
+
+
 class PhotoSerializer(serializers.ModelSerializer):
     meta = serializers.SerializerMethodField()
     faces = FaceSerializer(many=True)
+    detected_objects = ObjectSerializer(many=True)
 
     def get_meta(self, obj):
         return json.loads(obj.meta or 'null')
 
     class Meta:
         model = models.Photo
-        fields = ['id', 'name', 'description', 'image', 'thumbnail', 'meta', 'faces']
+        fields = ['id', 'name', 'description', 'image', 'thumbnail', 'meta', 'faces', 'detected_objects']
         read_only_fields = ['image', 'thumbnail', 'meta', 'faces']

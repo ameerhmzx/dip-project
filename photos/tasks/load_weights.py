@@ -3,7 +3,7 @@ from urllib.request import urlretrieve
 
 weights_map = {
     'facenet': 'https://drive.google.com/uc?id=1971Xk5RwedbudGgTIrGAL4F7Aifu7id1',
-    'darknet': 'https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT'
+    'yolov4': 'https://drive.google.com/open?id=1cewMfusmPjYWbrnuJRuKhPMwRe_b9PaT'
 }
 
 
