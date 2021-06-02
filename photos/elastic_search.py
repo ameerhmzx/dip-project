@@ -49,14 +49,17 @@ def save_embeddings(vector, face_id, person_id=-1):
     })
 
 
-def set_person(face_id, person_id):
-    global es
+def delete_embeddings(face_id):
     connect_es()
-    es.update('face_embeddings', id=face_id, body={'doc': {'person_id': person_id}})
+    es.delete('face_embeddings', id=face_id)
+
+
+def set_person(face_id, person_id):
+    connect_es()
+    res = es.update('face_embeddings', id=face_id, body={'doc': {'person_id': person_id}})
 
 
 def recognize_person(vector):
-    global es
     connect_es()
 
     response = es.search(index='face_embeddings', body={
@@ -85,7 +88,4 @@ def recognize_person(vector):
     results = sorted(response['hits']['hits'], key=lambda x: x['_score'], reverse=True)
     results = list(filter(lambda x: x['_score'] > 1.0, results))
 
-    if len(results) == 0:
-        return None
-
-    return results[0]['_source']['person_id']
+    return None if len(results) == 0 else results[0]['_source']['person_id']

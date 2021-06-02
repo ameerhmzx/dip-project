@@ -83,6 +83,7 @@ def extract_faces(image_path: str, pk: int) -> List[Face]:
 
     for i in range(len(faces)):
         person_id = recognize_person(embeddings[i])
+        print(person_id, flush=True)
         face_obj = models.Face.objects.create(
             confidence=detections[i]['confidence'],
             top=detections[i]['box'][0],
