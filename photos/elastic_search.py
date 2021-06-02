@@ -67,7 +67,7 @@ def recognize_person(vector):
                     "bool": {
                         "must_not": {
                             "term": {
-                                "person_id": 0
+                                "person_id": -1
                             }
                         }
                     },
@@ -88,5 +88,4 @@ def recognize_person(vector):
     if len(results) == 0:
         return None
 
-    result_id = results[0]['_source']['person_id']
-    return None if result_id == -1 else result_id
+    return results[0]['_source']['person_id']
