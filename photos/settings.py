@@ -90,8 +90,8 @@ CACHES = {
     },
 }
 
-CELERY_RESULT_BACKEND = 'django-cache'
-CELERY_CACHE_BACKEND = 'default'
+# CELERY_RESULT_BACKEND = 'django-cache'
+# CELERY_CACHE_BACKEND = 'default'
 CELERY_BROKER_URL = f"{REDIS_URL}/0"
 
 
