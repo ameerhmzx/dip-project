@@ -8,6 +8,7 @@ from PIL import Image
 from photos.celery import app
 from .load_weights import get_weights
 from photos import models
+from photos.elastic_search import save_embeddings, recognize_person
 
 
 class Face(TypedDict):
@@ -80,22 +81,16 @@ def extract_faces(image_path: str, pk: int) -> List[Face]:
     faces = [normalize_face(image, face) for face in detections]
     embeddings = facenet_model.predict(np.vstack(faces), batch_size=len(faces))
 
-    # TODO: recognize faces based on embedding
     for i in range(len(faces)):
-        models.Face.objects.create(
+        person_id = recognize_person(embeddings[i])
+        face_obj = models.Face.objects.create(
             confidence=detections[i]['confidence'],
             top=detections[i]['box'][0],
             left=detections[i]['box'][1],
             height=detections[i]['box'][2],
             width=detections[i]['box'][3],
-            photo_id=pk
+            photo_id=pk,
+            person_id=person_id
         )
 
-    # return [
-    #     {
-    #         'bbox': detections[i]['box'],
-    #         'confidence': detections[i]['confidence'],
-    #         'embeddings': embeddings[i]
-    #     }
-    #     for i in range(len(faces))
-    # ]
+        save_embeddings(embeddings[i], face_obj.id, person_id)

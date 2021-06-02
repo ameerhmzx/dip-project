@@ -16,6 +16,7 @@ Django==3.0.2
 django-celery-results==2.0.1
 django-redis==4.12.1
 djangorestframework==3.12.4
+elasticsearch==7.13.0
 filelock==3.0.12
 Flask==2.0.1
 flatbuffers==1.12
