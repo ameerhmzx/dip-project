@@ -42,8 +42,16 @@ export default function DetailsPane({currentFile}: Props) {
           <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
             {currentFile.meta !== null && Object.keys(currentFile.meta).map((key) => (
               <div key={key} className="py-3 flex justify-between text-sm font-medium">
-                <dt className="text-gray-500 mr-4">{key}</dt>
-                <dd className="text-gray-900">{currentFile.meta[key]}</dd>
+                {
+                  typeof currentFile.meta[key] !== 'object' ? <>
+                        <dt className="text-gray-500 mr-4">{key}</dt>
+                        <dd className="text-gray-900">{currentFile.meta[key]}</dd>
+                      </> :
+                      <>
+                        <dt className="text-gray-500 mr-4">{key}</dt>
+                        <dd className="text-gray-900">{currentFile.meta[key].join(', ')}</dd></>
+                }
+
               </div>
             ))}
           </dl>
