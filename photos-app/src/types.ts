@@ -43,7 +43,7 @@ export interface ImageObject {
 }
 
 export interface Image {
-  id: string;
+  id: number;
   name: string;
   description: string;
   image: string;
