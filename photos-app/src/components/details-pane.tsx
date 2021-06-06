@@ -1,5 +1,5 @@
 import {PencilIcon} from "@heroicons/react/solid";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Image} from "../types";
 
 interface Props {
@@ -8,6 +8,30 @@ interface Props {
 
 export default function DetailsPane({currentFile}: Props) {
   if (!currentFile) return <span />
+
+  const [metaData, setMetaData] = useState({});
+
+  useEffect(() => {
+    let metadata:Object = {};
+
+    if (currentFile && currentFile.meta !== null) {
+      Object.keys(currentFile.meta).map((key) =>{
+        if (!(key === 'XResolution' || key === 'YResolution') && key !== 'DateTime'
+            && key !== 'Make' && key !== 'Model' && key !== 'GPSInfo' && key !== 'ISOSpeedRatings'
+        ){
+          let processedKey = key.replace(/([A-Z])/g, ' $1').trim();
+          metadata[processedKey] = currentFile.meta[key];
+        }
+      })
+
+    if (currentFile.meta.Make && currentFile.meta.Model) metadata['Make & Model'] = currentFile.meta.Make + ' ' + currentFile.meta.Model;
+    if (currentFile.meta.GPSInfo) metadata['GPS Info'] = currentFile.meta.GPSInfo?.join(',');
+    if (currentFile.meta.ISOSpeedRatings) metadata['ISO Speed Ratings'] = currentFile.meta.ISOSpeedRatings;
+    if (currentFile.meta.DateTime)  metadata['Creation Time'] = currentFile.meta.DateTime;
+    if (currentFile.meta.XResolution && currentFile.meta.YResolution)  metadata['Resolution'] = currentFile.meta.XResolution + 'x' + currentFile.meta.XResolution;
+      setMetaData(metadata);
+    }
+  }, [currentFile]);
 
   return (
     <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
@@ -40,16 +64,13 @@ export default function DetailsPane({currentFile}: Props) {
         <div>
           <h3 className="font-medium text-gray-900">Information</h3>
           <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-            {currentFile.meta !== null && Object.keys(currentFile.meta).map((key) => (
+            {currentFile.meta !== null && Object.keys(metaData).map((key) => (
               <div key={key} className="py-3 flex justify-between text-sm font-medium">
                 {
-                  typeof currentFile.meta[key] !== 'object' ? <>
-                        <dt className="text-gray-500 mr-4">{key}</dt>
-                        <dd className="text-gray-900">{currentFile.meta[key]}</dd>
-                      </> :
-                      <>
-                        <dt className="text-gray-500 mr-4">{key}</dt>
-                        <dd className="text-gray-900">{currentFile.meta[key].join(', ')}</dd></>
+                  <>
+                    <dt className="text-gray-500 mr-4">{key}</dt>
+                    <dd className="text-gray-900">{metaData[key]}</dd>
+                  </>
                 }
 
               </div>
