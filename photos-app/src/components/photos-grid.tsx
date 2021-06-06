@@ -16,7 +16,7 @@ export default function PhotosGrid({images, onSelectionChange}: Props) {
       className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-6 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8"
     >
       {images.map((file) => (
-        <li key={file.name} className="relative" onClick={() => {
+        <li key={file.id} className="relative" onClick={() => {
           setSelected(file.id);
           onSelectionChange(file.id);
         }}>
