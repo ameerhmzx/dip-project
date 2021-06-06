@@ -25,7 +25,7 @@ function FacesLayer({currentFile}: Required<Props>) {
               {
                 person
                   ? <>
-                    <rect className="text-bg" x={x} y={y + height} width={width} height={16 * scaledPxUnit} />
+                    <rect className="text-bg" x={x} y={y + height} width={width} height={16 * scaledPxUnit}/>
                     <text fontSize={scaledPxUnit * 12} x={x + scaledPxUnit * 4} y={y + height + scaledPxUnit * 12}>
                       {person.name}
                     </text>
@@ -73,21 +73,25 @@ export default function DetailsPane({currentFile}: Props) {
             </div>
           </div>
         </div>
-        <div>
-          <h3 className="font-medium text-gray-900">Information</h3>
-          <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-            {currentFile.meta !== null && Object.entries(sortMeta(currentFile.meta)).map(([key, val]) => (
-              <div key={key} className="py-3 flex justify-between text-sm font-medium">
-                {
-                  <>
-                    <dt className="text-gray-500 mr-4">{key}</dt>
-                    <dd className="text-gray-900 truncate" title={val as string}>{val as string}</dd>
-                  </>
-                }
-              </div>
-            ))}
-          </dl>
-        </div>
+        {
+          currentFile.meta
+            ? <div>
+              <h3 className="font-medium text-gray-900">Information</h3>
+              <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
+                {Object.entries(sortMeta(currentFile.meta)).map(([key, val]) => (
+                  <div key={key} className="py-3 flex justify-between text-sm font-medium">
+                    {
+                      <>
+                        <dt className="text-gray-500 mr-4">{key}</dt>
+                        <dd className="text-gray-900 truncate" title={val as string}>{val as string}</dd>
+                      </>
+                    }
+                  </div>
+                ))}
+              </dl>
+            </div>
+            : <></>
+        }
         <div className="flex">
           <button
             type="button"

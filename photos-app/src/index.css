@@ -19,7 +19,7 @@
 }
 
 .face-bbox {
-    opacity: 0.5;
+    opacity: 0.3;
     fill: rgba(255, 255, 255, 0);
     stroke: #E5E7EB;
     mix-blend-mode: lighten;
