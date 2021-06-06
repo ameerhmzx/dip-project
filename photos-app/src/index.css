@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.faces text {
+    fill: #333;
+    opacity: 0;
+}
+
+.faces .text-bg {
+    stroke: #E5E7EB;
+    fill: #E5E7EB;
+    opacity: 0;
+}
+
+.faces .face-bbox:hover + .text-bg,
+.faces .face-bbox:hover + .text-bg + text {
+    opacity: 1;
+}
+
+.face-bbox {
+    opacity: 0.5;
+    fill: rgba(255, 255, 255, 0);
+    stroke: #E5E7EB;
+    mix-blend-mode: lighten;
+}
+
+.face-bbox:hover {
+    opacity: 1;
+}

@@ -48,6 +48,8 @@ export interface Image {
   description: string;
   image: string;
   thumbnail: string;
+  width: number;
+  height: number;
   meta: Partial<ImageMeta>,
   faces: Array<ImageFace>;
   detected_objects: Array<ImageObject>;

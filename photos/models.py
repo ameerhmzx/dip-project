@@ -23,6 +23,8 @@ class Photo(models.Model):
     image = models.ImageField(upload_to='photos/')
     thumbnail = models.ImageField(upload_to='photos/')
     meta = JSONField(blank=True, null=True)
+    width = models.PositiveIntegerField(default=0)
+    height = models.PositiveIntegerField(default=0)
 
     def delete(self, *args, **kwargs):
         self.image.storage.delete(self.image.name)

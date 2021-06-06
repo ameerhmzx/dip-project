@@ -16,7 +16,7 @@ class FaceSerializer(serializers.ModelSerializer):
     person = PersonSerializer()
 
     def get_bbox(self, obj):
-        return [obj.top, obj.left, obj.height, obj.width]
+        return [obj.left, obj.top, obj.width, obj.height]
 
     class Meta:
         model = models.Face
@@ -28,7 +28,7 @@ class ObjectSerializer(serializers.ModelSerializer):
     info = serializers.SerializerMethodField()
 
     def get_bbox(self, obj):
-        return [obj.top, obj.left, obj.height, obj.width]
+        return [obj.left, obj.top, obj.width, obj.height]
 
     def get_info(self, obj):
         return json.loads(obj.info or 'null')
@@ -48,5 +48,7 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Photo
-        fields = ['id', 'name', 'description', 'image', 'thumbnail', 'meta', 'faces', 'detected_objects']
+        fields = [
+            'id', 'name', 'description', 'width', 'height', 'image', 'thumbnail', 'meta', 'faces', 'detected_objects'
+        ]
         read_only_fields = ['image', 'thumbnail', 'meta', 'faces']

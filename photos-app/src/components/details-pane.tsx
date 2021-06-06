@@ -6,16 +6,52 @@ interface Props {
   currentFile?: Image,
 }
 
+function FacesLayer({currentFile}: Required<Props>) {
+  // 319 is max image size when rendered;
+  let scaledPxUnit = currentFile.width / 319;
+
+  return (
+    <svg className="w-full absolute inset-0 z-10 faces"
+         viewBox={`0 0 ${currentFile.width} ${currentFile.height}`}
+         strokeWidth={scaledPxUnit * 4 + 'px'}>
+      {
+        currentFile.faces.map(({bbox, person}) => {
+          let [x, y, width, height] = bbox;
+
+          return (
+            <>
+              <rect className="face-bbox" x={x} y={y} width={width} height={height} rx={scaledPxUnit * 3 + 'px'}/>
+              {
+                person
+                  ? <>
+                    <rect className="text-bg" x={x} y={y + height} width={width} height={16 * scaledPxUnit} />
+                    <text fontSize={scaledPxUnit * 12} x={x + scaledPxUnit * 4} y={y + height + scaledPxUnit * 12}>
+                      {person.name}
+                    </text>
+                  </>
+                  : <></>
+              }
+            </>
+          );
+        })
+      }
+    </svg>
+  )
+}
+
 export default function DetailsPane({currentFile}: Props) {
-  if (!currentFile) return <span />
+  if (!currentFile) return <span/>
+
 
   return (
     <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
       <div className="pb-16 space-y-6">
         <div>
-          <div className="block w-full rounded-lg overflow-hidden">
-            <img src={currentFile.image} alt="" className="object-cover w-full"/>
+          <div className="block w-full rounded-lg overflow-hidden relative">
+            <img src={currentFile.image} alt="" className="w-full"/>
+            <FacesLayer currentFile={currentFile}/>
           </div>
+
           <div className="mt-4">
             <h2 className="text-lg font-medium text-gray-900">
               <span className="sr-only">Details for </span>

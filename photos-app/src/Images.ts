@@ -7,6 +7,8 @@ export default [
         "description": null,
         "image": "http://localhost:8000/media/photos/IMG_0188_Xgakz9l.png",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG_0188_phWPSbi.png",
+        "width": 3024,
+        "height": 4032,
         "meta": {
             "ColorProfile": "Display P3",
             "ColorSpace": "RGB ",
@@ -42,6 +44,8 @@ export default [
         "description": null,
         "image": "http://localhost:8000/media/photos/IMG-20200112-WA0000.jpg",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG-20200112-WA0000.jpg",
+        "width": 622,
+        "height": 1280,
         "meta": null,
         "faces": [
             {
@@ -68,6 +72,8 @@ export default [
         "image": "http://localhost:8000/media/photos/IMG-20191020-WA0001.jpg",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG-20191020-WA0001.jpg",
         "meta": null,
+        "width": 170,
+        "height": 304,
         "faces": [
             {
                 "id": 43,
@@ -93,6 +99,8 @@ export default [
         "image": "http://localhost:8000/media/photos/IMG-20200112-WA0000_EC8FU5B.jpg",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG-20200112-WA0000_faTHsNB.jpg",
         "meta": null,
+        "width": 622,
+        "height": 1280,
         "faces": [
             {
                 "id": 44,
@@ -226,6 +234,8 @@ export default [
         "description": null,
         "image": "http://localhost:8000/media/photos/IMG-20200112-WA0000_KP3Negp.jpg",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG-20200112-WA0000_ro4maUR.jpg",
+        "width": 622,
+        "height": 1280,
         "meta": null,
         "faces": [
             {
@@ -360,6 +370,8 @@ export default [
         "description": null,
         "image": "http://localhost:8000/media/photos/IMG-20200112-WA0000_Ya7tcJR.jpg",
         "thumbnail": "http://localhost:8000/media/photos/thb_IMG-20200112-WA0000_ErCJpeK.jpg",
+        "width": 622,
+        "height": 1280,
         "meta": null,
         "faces": [
             {
@@ -446,6 +458,8 @@ export default [
         "description": "",
         "image": "http://localhost:8000/media/photos/D883348A-6A67-40F1-A409-D73B7AB87C15.JPG",
         "thumbnail": "http://localhost:8000/media/photos/thb_D883348A-6A67-40F1-A409-D73B7AB87C15.JPG",
+        "width": 3088,
+        "height": 2320,
         "meta": {
             "ColorProfile": "Display P3",
             "ColorSpace": "RGB ",
@@ -509,6 +523,8 @@ export default [
         "description": null,
         "image": "http://localhost:8000/media/photos/D883348A-6A67-40F1-A409-D73B7AB87C15_4l8UQ4O.JPG",
         "thumbnail": "http://localhost:8000/media/photos/thb_D883348A-6A67-40F1-A409-D73B7AB87C15_weYKm4y.JPG",
+        "width": 3088,
+        "height": 2320,
         "meta": {
             "ColorProfile": "Display P3",
             "ColorSpace": "RGB ",
