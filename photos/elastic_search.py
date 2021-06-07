@@ -86,6 +86,6 @@ def recognize_person(vector):
     })
 
     results = sorted(response['hits']['hits'], key=lambda x: x['_score'], reverse=True)
-    results = list(filter(lambda x: x['_score'] > 1.2, results))
+    results = list(filter(lambda x: x['_score'] > 1.3, results))
 
     return None if len(results) == 0 else results[0]['_source']['person_id']

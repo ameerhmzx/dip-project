@@ -1,7 +1,9 @@
 import {PencilIcon} from "@heroicons/react/solid";
-import React, {useEffect, useState} from "react";
+import React, {Fragment} from "react";
 import {Image} from "../types";
 import {sortMeta} from "../meta";
+import {mutate} from 'swr'
+
 
 interface Props {
   currentFile?: Image,
@@ -16,12 +18,15 @@ function FacesLayer({currentFile}: Required<Props>) {
          viewBox={`0 0 ${currentFile.width} ${currentFile.height}`}
          strokeWidth={scaledPxUnit * 4 + 'px'}>
       {
-        currentFile.faces.map(({bbox, person}) => {
+        currentFile.faces.map((face, index) => {
+          let {bbox, person} = face;
           let [x, y, width, height] = bbox;
 
           return (
-            <>
-              <rect className="face-bbox" x={x} y={y} width={width} height={height} rx={scaledPxUnit * 3 + 'px'}/>
+            <Fragment key={index}>
+              <rect
+                x={x} y={y} width={width} height={height} rx={scaledPxUnit * 3 + 'px'}
+                className="face-bbox" onClick={() => console.log(face)}/>
               {
                 person
                   ? <>
@@ -32,7 +37,7 @@ function FacesLayer({currentFile}: Required<Props>) {
                   </>
                   : <></>
               }
-            </>
+            </Fragment>
           );
         })
       }
@@ -42,6 +47,11 @@ function FacesLayer({currentFile}: Required<Props>) {
 
 export default function DetailsPane({currentFile}: Props) {
   if (!currentFile) return <span/>
+
+  let handleDelete = async () => {
+    await fetch(`/api/photos/${currentFile.id}`, {method: 'DELETE'});
+    await mutate('/api/photos/')
+  }
 
   return (
     <aside className="hidden w-96 bg-white p-8 border-l border-gray-200 overflow-y-auto lg:block">
@@ -53,7 +63,7 @@ export default function DetailsPane({currentFile}: Props) {
           </div>
 
           <div className="mt-4">
-            <h2 className="text-lg font-medium text-gray-900">
+            <h2 className="text-lg font-medium text-gray-900 truncate" title={currentFile.name}>
               <span className="sr-only">Details for </span>
               {currentFile.name}
             </h2>
@@ -78,7 +88,10 @@ export default function DetailsPane({currentFile}: Props) {
             ? <div>
               <h3 className="font-medium text-gray-900">Information</h3>
               <dl className="mt-2 border-t border-b border-gray-200 divide-y divide-gray-200">
-                {Object.entries(sortMeta(currentFile.meta)).map(([key, val]) => (
+                {Object.entries({
+                  ...sortMeta(currentFile.meta),
+                  Dimensions: `${currentFile.width} × ${currentFile.height}`,
+                }).map(([key, val]) => (
                   <div key={key} className="py-3 flex justify-between text-sm font-medium">
                     {
                       <>
@@ -102,6 +115,7 @@ export default function DetailsPane({currentFile}: Props) {
           <button
             type="button"
             className="flex-1 ml-3 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={handleDelete}
           >
             Delete
           </button>

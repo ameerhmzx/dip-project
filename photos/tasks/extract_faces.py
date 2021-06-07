@@ -1,14 +1,14 @@
 import math
-from typing import List, TypedDict, Tuple, Any
+from typing import TypedDict, Tuple, Any
 
 import cv2
 import numpy as np
 from PIL import Image
 
-from photos.celery import app
-from .load_weights import get_weights
 from photos import models
+from photos.celery import app
 from photos.elastic_search import save_embeddings, recognize_person
+from .load_weights import get_weights
 
 
 class Face(TypedDict):
@@ -54,13 +54,13 @@ def normalize_face(image: Image, face):
 
 
 @app.task
-def extract_faces(image_path: str, pk: int) -> List[Face]:
+def extract_faces(image_path: str, pk: int):
     """extract faces from the given image"""
     image = Image.open(image_path)
     image = np.array(image)
 
     if image.shape[0] <= 0 or image.shape[1] <= 0:
-        return []
+        return None
 
     import mtcnn
 
@@ -69,7 +69,7 @@ def extract_faces(image_path: str, pk: int) -> List[Face]:
     detections = face_detector.detect_faces(image)
 
     if len(detections) < 1:
-        return []
+        return None
 
     from deepface.basemodels.Facenet import InceptionResNetV2
 
@@ -86,10 +86,10 @@ def extract_faces(image_path: str, pk: int) -> List[Face]:
         print(person_id, flush=True)
         face_obj = models.Face.objects.create(
             confidence=detections[i]['confidence'],
-            top=detections[i]['box'][0],
-            left=detections[i]['box'][1],
-            height=detections[i]['box'][2],
-            width=detections[i]['box'][3],
+            left=detections[i]['box'][0],
+            top=detections[i]['box'][1],
+            width=detections[i]['box'][2],
+            height=detections[i]['box'][3],
             photo_id=pk,
             person_id=person_id
         )

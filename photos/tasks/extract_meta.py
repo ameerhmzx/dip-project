@@ -38,9 +38,11 @@ ALLOWED_TAGS = {
 
 
 def get_color_info(image: Image):
-    icc_profile = image.info.get('icc_profile')
-    profile = ImageCms.ImageCmsProfile(io.BytesIO(icc_profile))
+    icc_profile = image.info.get('icc_profile', None)
+    if not icc_profile:
+        return {}
 
+    profile = ImageCms.ImageCmsProfile(io.BytesIO(icc_profile))
     return {
         'ColorProfile': profile.profile.profile_description,
         'ColorSpace': profile.profile.xcolor_space

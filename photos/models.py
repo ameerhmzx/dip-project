@@ -70,7 +70,8 @@ class DetectedObject(models.Model):
 
 @receiver(post_delete, sender=Face)
 def delete_face(sender, instance, **kwargs):
-    try:
-        delete_embeddings(instance.pk)
-    except NotFoundError:
-        pass
+    return
+    # try:
+    #     delete_embeddings(instance.pk)
+    # except NotFoundError:
+    #     pass

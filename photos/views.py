@@ -4,6 +4,7 @@ from PIL import Image
 from django.core.files.base import ContentFile
 from django.http import HttpResponseBadRequest
 from rest_framework import generics
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.response import Response
 
 from .models import Photo
@@ -11,6 +12,12 @@ from .serializers import PhotoSerializer
 
 
 from .tasks import extract_meta, extract_faces, extract_objects
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return
 
 
 def image_to_file(image: Image, name):
@@ -29,12 +36,14 @@ class PhotoListView(generics.ListCreateAPIView):
             return HttpResponseBadRequest()
 
         image = Image.open(photo)
-        thumbnail = image.copy().thumbnail((200, 200))
+        # thumbnail = image.copy().thumbnail((200, 200))
 
         photo_obj = Photo.objects.create(
             name=photo.name,
             image=image_to_file(image, photo.name),
-            thumbnail=image_to_file(thumbnail, "thb_" + photo.name)
+            width=image.size[0],
+            height=image.size[1],
+            thumbnail=image_to_file(image, "thb_" + photo.name)
         )
 
         extract_meta.delay(photo_obj.image.path, photo_obj.id)
@@ -46,5 +55,6 @@ class PhotoListView(generics.ListCreateAPIView):
 
 
 class PhotoDetailView(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer

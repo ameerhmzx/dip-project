@@ -3,10 +3,17 @@ import React, {useState} from 'react'
 import Sidebar from "./components/sidebar";
 import DetailsPane from "./components/details-pane";
 import PhotosGrid from "./components/photos-grid";
-import Images from './Images';
+import useSWR from "swr";
 
-export default function() {
+// @ts-ignore
+const fetcher = (...args) => fetch(...args).then(res => res.json())
+
+export default function () {
   let [selectedId, setSelected] = useState<number>();
+  const {data: images, error} = useSWR('/api/photos/', fetcher)
+
+  if (!images) return <div>loading...</div>
+  if (error) return <div>failed to load</div>
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
@@ -22,12 +29,12 @@ export default function() {
               </div>
 
               <section className="mt-8 pb-16">
-                <PhotosGrid images={Images} onSelectionChange={(id) => setSelected(id)}/>
+                <PhotosGrid images={images} onSelectionChange={(id) => setSelected(id)}/>
               </section>
             </div>
           </main>
 
-          <DetailsPane currentFile={Images.find((i) => i.id === selectedId)}/>
+          <DetailsPane currentFile={images.find((i) => i.id === selectedId)}/>
         </div>
       </div>
     </div>
